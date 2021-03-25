@@ -603,7 +603,6 @@ Let's continue with our football betting app! This time, we have a map with a lo
 4. Loop over the events and log them to the console, marking whether it's in the first half or second half (after 45 min) of the game, like this:
 [FIRST HALF] 17: ⚽️ GOAL
 
-*/
 
 const gameEvents = new Map([
   [17, '⚽️ GOAL'],
@@ -636,3 +635,102 @@ for (const [key, value] of gameEvents) {
   //   console.log(`[SECOND HALF] ${key}: ${value}`);
   // }
 }
+*/
+
+
+// const airline = 'TAP Air Portugal';
+// const plane = 'A320';
+
+// console.log(airline.slice(4)); // Air Portugal
+//console.log(airline.slice(4,7)); // Air
+
+// console.log(airline.slice(0,airline.indexOf(" "))); // TAP
+// console.log(airline.slice(airline.lastIndexOf(" ") + 1)); // Portugal
+// console.log(airline.slice(-2)); // al
+// console.log(airline.slice(1, -1)); // AP Air Portuga
+
+// console.log(new String ("Jesus")); // String {"Jesus"}
+// console.log(typeof new String ("Jesus")); // object
+// console.log(typeof new String ("Jesus").slice(1)); // string
+
+//const checkMiddleSeat = function(seat){
+  // B and E are middle seats
+//  const str = seat.slice(-1);
+//  if (str === 'B' || str === 'E') {
+//    console.log('You got the middle seat');
+//  } else {
+//    console.log('You got lucky');
+//  }
+// };
+
+// checkMiddleSeat('11B');
+// checkMiddleSeat('23C');
+// checkMiddleSeat('3E');
+
+// Index Of & Last Index Of
+// console.log(airline.indexOf("r")); // 6
+// console.log(airline.lastIndexOf("r")); // 10
+// console.log(airline.indexOf("Portugal")) // 8
+
+// Access String
+// console.log(plane[0]); // A
+// console.log('B737'[0]); // B
+
+// Length String
+// console.log(airline.length); // 16
+// console.log('Jesus'.length); // 5
+
+// const passenger = 'JeSuS';
+// const passengerLow = passenger.toLowerCase(); // jesus
+// const correct = passengerLow[0].toUpperCase() + passengerLow.slice(1); // Jesus
+
+// Comparing Emails
+// const email = 'hello@jesus.io';
+// const login = ' Hello@Jesus.Io \n';
+// const normalizedEmail = login.toLowerCase().trim();
+
+// console.log(normalizedEmail); // hello@jesus.io
+
+// const priceGB = "230,89€";
+// const priceUS = priceGB.replace('€','$').replace(',', '.');
+
+// console.log(priceUS); // 230.89$
+
+// const announcement = "Board door 23!, Board door 23!";
+
+// First occurence
+// Board gate 23!, Board door 23!
+//console.log(announcement.replace('door', 'gate'));
+// Whole string
+// Board gate 23!, Board gate 23!
+//console.log(announcement.replaceAll('door', 'gate'));
+// Regex to match string global
+// Board gate 23!, Board gate 23!
+// console.log(announcement.replaceAll(/door/g, 'gate'));
+
+// Includes, StartWith, EndWith
+
+const plane = 'Airbus A320neo';
+console.log(plane.includes('A320')); // true
+console.log(plane.includes('Boeing')); // false
+console.log(plane.startsWith('Airb')); // true
+console.log(plane.endsWith('neo')); // true
+
+if (plane.startsWith('Airbus') && plane.endsWith('neo') ) {
+  console.log('Part of the new Airbus family');
+}
+
+const checkBagging = function (items) {
+  const baggage = items.toLowerCase()
+  if (baggage.includes('knife') || baggage.includes('gun') ) {
+    console.log('You are not allowed to board');
+  } else {
+    console.log('Welcome aboard');
+  }
+}
+
+checkBagging("I have Socks and camera")
+checkBagging("I have Food and Knife")
+checkBagging("I have Outfit and Gun")
+
+
