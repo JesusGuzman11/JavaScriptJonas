@@ -4,6 +4,17 @@
 const flights =
   '_Delayed_Departure;fao93766109;txl2133758440;11:25+_Arrival;bru0943384722;fao93766109;11:45+_Delayed_Arrival;hel7439299980;fao93766109;12:05+_Departure;fao93766109;lis2323639855;12:30';
 
+const getCode = str => str.slice(0, 3).toUpperCase();
+
+for (const flight of flights.split('+')) {
+  const [type, from, to, time] = flight.split(';');
+  const output = `${type.startsWith('_Delayed') ? '🔴' : ''}${type.replaceAll(
+    '_',
+    ' '
+  )} ${getCode(from)} ${getCode(to)} (${time.replace(':', 'h')})`.padStart(36);
+  console.log(output);
+}
+
 const weekdays = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
 
 const [mon, tue, wed, thu, fri, sat, sun] = weekdays;
@@ -637,7 +648,6 @@ for (const [key, value] of gameEvents) {
 }
 */
 
-
 // const airline = 'TAP Air Portugal';
 // const plane = 'A320';
 
@@ -654,7 +664,7 @@ for (const [key, value] of gameEvents) {
 // console.log(typeof new String ("Jesus").slice(1)); // string
 
 //const checkMiddleSeat = function(seat){
-  // B and E are middle seats
+// B and E are middle seats
 //  const str = seat.slice(-1);
 //  if (str === 'B' || str === 'E') {
 //    console.log('You got the middle seat');
@@ -710,27 +720,132 @@ for (const [key, value] of gameEvents) {
 
 // Includes, StartWith, EndWith
 
-const plane = 'Airbus A320neo';
-console.log(plane.includes('A320')); // true
-console.log(plane.includes('Boeing')); // false
-console.log(plane.startsWith('Airb')); // true
-console.log(plane.endsWith('neo')); // true
+// const plane = 'Airbus A320neo';
+// console.log(plane.includes('A320')); // true
+// console.log(plane.includes('Boeing')); // false
+// console.log(plane.startsWith('Airb')); // true
+// console.log(plane.endsWith('neo')); // true
 
-if (plane.startsWith('Airbus') && plane.endsWith('neo') ) {
-  console.log('Part of the new Airbus family');
-}
+// if (plane.startsWith('Airbus') && plane.endsWith('neo') ) {
+//   console.log('Part of the new Airbus family');
+// }
 
-const checkBagging = function (items) {
-  const baggage = items.toLowerCase()
-  if (baggage.includes('knife') || baggage.includes('gun') ) {
-    console.log('You are not allowed to board');
-  } else {
-    console.log('Welcome aboard');
-  }
-}
+// const checkBagging = function (items) {
+//   const baggage = items.toLowerCase()
+//   if (baggage.includes('knife') || baggage.includes('gun') ) {
+//     console.log('You are not allowed to board');
+//   } else {
+//     console.log('Welcome aboard');
+//   }
+// }
 
-checkBagging("I have Socks and camera")
-checkBagging("I have Food and Knife")
-checkBagging("I have Outfit and Gun")
+// checkBagging("I have Socks and camera")
+// checkBagging("I have Food and Knife")
+// checkBagging("I have Outfit and Gun")
 
+// NOTE:
+// Split returns an array w.o the argument passed in
+// Join returns the array together replacing the , by the argument
 
+// console.log('some+nice+string'.split('+')); // ["some", "nice", "string"]
+// console.log('Jesús Guzman'.split(' ')); // ["Jesus", "Guzman"]
+
+// const newName = ['Mr.', 'Jesus', 'Guzman'].join(' ');
+// console.log(newName); // Mr. Jesus Guzman
+
+// const capitalizeName = function (name) {
+//   const names = name.split(' ');
+//   const namesUpper = [];
+//   for (const n of names) {
+//     namesUpper.push(n[0].toUpperCase() + n.slice(1));
+//     // alternative
+//     // namesUpper.push(n.replace(n[0], n[0].toUpperCase()));
+//   }
+//   console.log(namesUpper); // ["Annie", "Vargas"]
+// };
+
+// capitalizeName('Annie Vargas');
+
+// NOTE:
+// Padding add the character passed as second argument
+// and will add it until strings match the first argument (desired length)
+
+// console.log('Jesus'.padStart(10, '+').padEnd(15, '+')); // +++++Jesus+++++
+
+// const maskCreditCard = function (number) {
+//   const card = number + '';
+//   const masked = card.slice(-4);
+//   return masked.padStart(card.length, '*');
+// };
+// console.log(maskCreditCard(1254879564874521)); // ************4521
+
+// NOTE:
+// Repeat the number of times we pass it as argument
+
+// const message = 'Bad weather... All departures delayed... ';
+
+// console.log(message.repeat(5)); // message * 5
+
+// const planesInLine = function (n) {
+//   console.log(`There're ${n} planes in line ${'✈️'.repeat(n)}`);
+// };
+
+// planesInLine(2); // There're 2 planes in line ✈️✈️
+
+// Coding Challenge #4
+
+/* 
+Write a program that receives a list of variable names written in underscore_case and convert them to camelCase.
+
+The input will come from a textarea inserted into the DOM (see code below), and conversion will happen when the button is pressed.
+
+THIS TEST DATA (pasted to textarea)
+underscore_case
+first_name
+Some_Variable 
+calculate_AGE
+delayed_departure
+
+SHOULD PRODUCE THIS OUTPUT (5 separate console.log outputs)
+underscoreCase      ✅
+firstName           ✅✅
+someVariable        ✅✅✅
+calculateAge        ✅✅✅✅
+delayedDeparture    ✅✅✅✅✅
+
+Afterwards, test with your own test data!
+
+GOOD LUCK 😀
+*/
+
+// document.body.append(document.createElement('textarea'));
+// document.body.append(document.createElement('button'));
+
+// document.querySelector('button').addEventListener('click', function () {
+//   const text = document.querySelector('textarea').value;
+//   const textArr = text.split('\n');
+//   const newWords = [];
+//   for (const word of textArr) {
+//     if (word.includes('_')) {
+//       newWords.push(word.split('_'));
+//     }
+//   }
+//   for (const [idx, [first, second]] of newWords.entries()) {
+//     first.toLowerCase();
+//     const secondUpper = second[0].toUpperCase() + second.slice(1).toLowerCase();
+//     console.log(`${first}${secondUpper} ${'✅'.repeat(idx + 1)}`);
+//   }
+// });
+
+// document.querySelector('button').addEventListener('click', function () {
+//   const text = document.querySelector('textarea').value;
+//   const rows = text.split('\n');
+//   for (const [idx, row] of rows.entries()) {
+//     const [first, second] = row.toLowerCase().trim().split('_');
+//     const output = `${first}${second.replace(
+//       second[0],
+//       second[0].toUpperCase()
+//     )}`;
+//     console.log(`${output.padEnd(20)}${'✅'.repeat(idx + 1)}`);
+//   }
+// });
