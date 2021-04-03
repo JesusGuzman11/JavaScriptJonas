@@ -290,3 +290,110 @@ GOOD LUCK 😀
 
 // poll.displayResults.call({ answers: [1, 5, 3, 9, 6, 1] }, 'string');
 // poll.displayResults.call({ answers: [1, 5, 3, 9, 6, 1] });
+
+// NOTE:
+// IIFE need to be wraped into ()
+
+// const runOnce = function () {
+//   console.log('This will never run again');
+// };
+
+// runOnce();
+
+// (function () {
+//   console.log('This will never run again');
+//   const age = 26;
+//   var isMale = true;
+// })(); // Invoked
+
+// console.log(isMale); // ReferenceError
+// console.log(age); // ReferenceError
+
+// (() => console.log('This will ALSO never run again'))(); // Invoked
+
+// {
+//   const hi = 'Hola';
+//   var love = true;
+// }
+// console.log(love); // true
+// console.log(hi); // ReferenceError
+
+// NOTE:
+// Closures
+
+// const secureBooking = function () {
+//   let passengerCount = 0;
+//   return function () {
+//     passengerCount++;
+//     console.log(`${passengerCount} passengers`);
+//   };
+// };
+
+// const booker = secureBooking();
+
+// booker(); // 1 passengers
+// booker(); // 1 passengers
+// booker(); // 1 passengers
+
+// NOTE:
+// Displays an interactive list of the properties
+// of the specified JavaScript object.
+// The output is presented as a hierarchical listing
+// with disclosure triangles that let you see the
+// contents of child objects.
+
+// console.dir(booker);
+
+// NOTE:
+// Closure Example reminds the a and b variables
+
+// let f;
+// const g = function () {
+//   const a = 11;
+//   f = function () {
+//     console.log(a * 2);
+//   };
+// };
+
+// const h = function () {
+//   const b = 13;
+//   f = function () {
+//     console.log(b * 2);
+//   };
+// };
+
+// g();
+// f(); // 22
+
+// // Re-assign variable
+// h();
+// f(); // 26
+
+// NOTE:
+// Closure have priority over scope chain
+// So even if we have a perGroup on global scope
+// it will use the function variable but if we comment
+// that variable JS uses the scope chain
+
+// const boardPassengers = function (n, wait) {
+//   const perGroup = n / 3;
+//   setTimeout(() => {
+//     console.log(`We are now boarding all ${n} passengers`);
+
+//     console.log(`There're 3 groups, each with ${perGroup} passengers`);
+//   }, wait * 1000);
+
+//   console.log(`Will start boarding in ${wait} seconds`);
+// };
+
+// const perGroup = 1000;
+// boardPassengers(180, 3);
+
+// Challenge
+(function () {
+  const header = document.querySelector('h1');
+  header.style.color = 'red';
+  document
+    .querySelector('body')
+    .addEventListener('click', () => (header.style.color = 'blue'));
+})();
