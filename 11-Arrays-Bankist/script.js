@@ -6,28 +6,28 @@
 
 // Data
 const account1 = {
-  owner: 'Jonas Schmedtmann',
+  owner: 'Jesús Guzmán',
   movements: [200, 450, -400, 3000, -650, -130, 70, 1300],
   interestRate: 1.2, // %
   pin: 1111,
 };
 
 const account2 = {
-  owner: 'Jessica Davis',
+  owner: 'Annie Vargas',
   movements: [5000, 3400, -150, -790, -3210, -1000, 8500, -30],
   interestRate: 1.5,
   pin: 2222,
 };
 
 const account3 = {
-  owner: 'Steven Thomas Williams',
+  owner: 'Tirsa Gutierrez Ramirez',
   movements: [200, -200, 340, -300, -20, 50, 400, -460],
   interestRate: 0.7,
   pin: 3333,
 };
 
 const account4 = {
-  owner: 'Sarah Smith',
+  owner: 'Teresa Guzmán',
   movements: [430, 1000, 700, 50, 90],
   interestRate: 1,
   pin: 4444,
@@ -73,41 +73,38 @@ const createUsernames = function (accs) {
 
 createUsernames(accounts);
 
-const calcDisplayBalance = function (movements) {
-  const balance = movements.reduce((acc, mov) => acc + mov);
-  labelBalance.textContent = `${balance}€`;
+const calcDisplayBalance = function (account) {
+  account.balance = account.movements.reduce((acc, mov) => acc + mov);
+  labelBalance.textContent = `${account.balance}€`;
 };
 
-calcDisplayBalance(account1.movements);
-
-const calcDisplaySummary = function (movements) {
-  const incomes = movements
+const calcDisplaySummary = function (account) {
+  const incomes = account.movements
     .filter(mov => mov > 0)
     .reduce((acc, mov) => acc + mov, 0);
 
   labelSumIn.textContent = `${incomes}€`;
 
-  const out = movements
+  const out = account.movements
     .filter(mov => mov < 0)
     .reduce((acc, mov) => acc + mov, 0);
 
   labelSumOut.textContent = `${Math.abs(out)}€`;
 
-  const interest = movements
+  const interest = account.movements
     .filter(mov => mov > 0)
-    .map(deposit => (deposit * 1.2) / 100)
+    .map(deposit => (deposit * account.interestRate) / 100)
     .filter(int => int >= 1)
     .reduce((acc, int) => acc + int, 0);
 
   labelSumInterest.textContent = `${interest}€`;
 };
 
-calcDisplaySummary(account1.movements);
-
-const displayMovements = function (movements) {
+const displayMovements = function (movements, sort = false) {
   // Cleaning container
   containerMovements.innerHTML = '';
-  movements.forEach((mov, idx) => {
+  const movs = sort ? movements.slice().sort((a, b) => a - b) : movements;
+  movs.forEach((mov, idx) => {
     const type = mov > 0 ? 'deposit' : 'withdrawal';
     const html = `
       <div class="movements__row">
@@ -122,7 +119,93 @@ const displayMovements = function (movements) {
   });
 };
 
-displayMovements(account1.movements);
+const updateUI = function (account) {
+  // Display movements
+  displayMovements(account.movements);
+  // Display balance
+  calcDisplayBalance(account);
+  // Display summary
+  calcDisplaySummary(account);
+};
+
+// EVENTS HANDLERS
+let currentAccount;
+
+btnLogin.addEventListener('click', function (event) {
+  // Prevent submitting from
+  event.preventDefault();
+  currentAccount = accounts.find(
+    account => account.user === inputLoginUsername.value
+  );
+
+  if (currentAccount?.pin === Number(inputLoginPin.value)) {
+    labelWelcome.textContent = `Welcome back ${
+      currentAccount.owner.split(' ')[0]
+    }`;
+
+    // Clear Inputs
+    inputLoginUsername.value = inputLoginPin.value = '';
+    inputLoginPin.blur();
+    // Display UI and message
+    containerApp.style.opacity = 100;
+    // Update UI
+    updateUI(currentAccount);
+  }
+});
+
+btnTransfer.addEventListener('click', function (event) {
+  event.preventDefault();
+  const amount = Number(inputTransferAmount.value);
+  const receiveAcc = accounts.find(
+    account => account.user === inputTransferTo.value
+  );
+  inputTransferTo.value = inputTransferAmount.value = '';
+  inputTransferAmount.blur();
+  if (
+    amount > 0 &&
+    receiveAcc &&
+    currentAccount.balance >= amount &&
+    receiveAcc.user !== currentAccount.user
+  ) {
+    // Doing the transfer
+    currentAccount.movements.push(-amount);
+    receiveAcc.movements.push(amount);
+    updateUI(currentAccount);
+  }
+});
+
+btnLoan.addEventListener('click', function (event) {
+  event.preventDefault();
+  const amount = Number(inputLoanAmount.value);
+  if (amount > 0 && currentAccount.movements.some(mov => mov >= amount * 0.1)) {
+    currentAccount.movements.push(amount);
+    updateUI(currentAccount);
+  }
+  inputLoanAmount.value = '';
+});
+
+btnClose.addEventListener('click', function (event) {
+  event.preventDefault();
+  if (
+    inputCloseUsername.value === currentAccount.user &&
+    Number(inputClosePin.value) === currentAccount.pin
+  ) {
+    const idx = accounts.findIndex(acc => acc.user === currentAccount.user);
+
+    // Delete account
+    accounts.splice(idx, 1);
+    containerApp.style.opacity = 0;
+  }
+  inputCloseUsername.value = inputClosePin.value = '';
+});
+
+let sorted = false;
+
+btnSort.addEventListener('click', function (event) {
+  event.preventDefault();
+  displayMovements(currentAccount.movements, !sorted);
+  sorted = !sorted;
+});
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
 // LECTURES
@@ -384,3 +467,175 @@ TEST DATA 2: [16, 6, 10, 5, 6, 1, 4]
 //   .reduce((acc, mov) => acc + mov, 0);
 
 // console.log(totalDepositsUSD); // 5522.000000000001
+
+// NOTE:
+// The find method returns the first element who satisfies a certain condition
+
+// const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
+
+// const firstWithdrawal = movements.find(mov => mov < 0);
+
+// console.log(firstWithdrawal); // -400
+
+// let findedMov;
+// for (const mov of movements) {
+//   if (mov < 0) {
+//     findedMov = mov;
+//     break;
+//   }
+// }
+
+// console.log(findedMov);
+
+// NOTE:
+// Find Index returns the index of the element who satisfies the condition
+// if no one satisfies the condition it returns -1
+
+// const data = [
+//   {
+//     firstName: 'Jesus',
+//     lastName: 'Guzman',
+//   },
+//   {
+//     firstName: 'Annie',
+//     lastName: 'Vargas',
+//   },
+//   {
+//     firstName: 'Tirsa',
+//     lastName: 'Gutierrez',
+//   },
+// ];
+
+// const index = data.findIndex(user => user.firstName === 'Annie');
+
+// console.log(index); // 1
+
+// NOTE:
+// Some method return true if there's at least one element who satisfies
+// the condition if not returns false
+
+// const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
+
+// const anyDeposits = movements.some(mov => mov > 0);
+
+// console.log(anyDeposits); // true
+
+// NOTE:
+// Every returns true only if whole array satisfies the condition
+
+// const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
+// const movements2 = [200, 450, 200, 6000, 100, 50, 50, 300];
+
+// console.log(movements.every(mov => mov > 0)); // false
+// console.log(movements2.every(mov => mov > 0)); // true
+
+// NOTE:
+// Flat returns a new array (shallow copy) with all elements no matter
+// if there's nested arrays into the new array
+
+// const arr = [[1, 2, 3], [4, 5, 6], 7, 8];
+// const arr2 = [[[1, 2], 3], [4, [5, 6]], 7, 8];
+
+// console.log(arr.flat()); // [1,2,3,4,5,6,7,8]
+// console.log(arr2.flat(2)); // [1,2,3,4,5,6,7,8]
+
+// NOTE:
+// Flat map returns a new array (shallow copy) with a map method and then
+// performs a level 1 flat method
+
+// const arr = [[1, 2, 3], [4, 5, 6], 7, 8];
+
+// const sumArr = arr
+//   .flatMap(element => element)
+//   .reduce((acc, element) => acc + element, 0);
+
+// console.log(sumArr); // 36
+
+// NOTE:
+// Sort mutates the original array and by default converts whole
+// array into strings if no compare function is provided
+
+// const names = ['Jesus', 'Annie', 'Tirsa'];
+// console.log(names.sort());
+
+// const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
+
+// return < 0 => A, B (keep order)
+// return > 0 => B, A (switch order)
+// Ascending
+// movements.sort((a, b) => {
+//   if (a > b) return 1;
+//   if (a < b) return -1;
+// });
+// console.log(movements); // [-650, -400, -130, 70, 200, 450, 1300, 3000]
+
+// // Descending
+// movements.sort((a, b) => {
+//   if (a > b) return -1;
+//   if (a < b) return 1;
+// });
+
+// console.log(movements); // [3000, 1300, 450, 200, 70, -130, -400, -650]
+
+// // Alternative
+
+// movements.sort((a, b) => a - b);
+
+// console.log(movements); // [-650, -400, -130, 70, 200, 450, 1300, 3000]
+
+// movements.sort((a, b) => b - a);
+
+// console.log(movements); // [3000, 1300, 450, 200, 70, -130, -400, -650]
+
+// NOTE:
+// new Array constructor creates an array with the passed arguments
+// however if we just send 1 number as argument it creates an array
+// with that length and whole elements are empty also you cant loop over it
+
+// NOTE:
+// Fill method works like slice method and overrides the value of the indexes
+// with the first argument provided
+
+// const arr = [1, 2, 3, 4, 5, 6, 7];
+
+// const x = new Array(7);
+
+// console.log(x); // [empty × 7]
+
+// // Filling empty array
+// x.fill(1);
+// console.log(x); // [1, 1, 1, 1, 1, 1, 1]
+
+// // Overriding an array indexes
+// arr.fill(11, 3, 5);
+// console.log(arr); // [1, 2, 3, 11, 11, 6, 7]
+
+// NOTE:
+// Array From creates programatically an array and recieve 2 arguments
+// first an object with the desired length and second a map function
+// same like map method but just with access to current value and index
+
+// const y = Array.from({ length: 7 }, () => 1);
+// console.log(y); // [1, 1, 1, 1, 1, 1, 1]
+
+// const z = Array.from({ length: 7 }, (_, idx) => idx + 1);
+// console.log(z); // [1, 2, 3, 4, 5, 6, 7]
+
+// const randomDice = Array.from({ length: 100 }, () =>
+//   Math.trunc(Math.random() * 7)
+// );
+// console.log(randomDice);
+
+// labelBalance.addEventListener('click', function () {
+//   const movementsUI = Array.from(
+//     document.querySelectorAll('.movements__value'),
+//     el => Number(el.textContent.replace('€', ''))
+//   );
+//   console.log(movementsUI); // [1300, 70, -130, -650, 3000, -400, 450, 200]
+
+//   const movementsUI2 = [
+//     ...document.querySelectorAll('.movements__value'),
+//   ].map(el => Number(el.textContent.replace('€', '')));
+
+//   console.log(movementsUI2); // [1300, 70, -130, -650, 3000, -400, 450, 200]
+// });
