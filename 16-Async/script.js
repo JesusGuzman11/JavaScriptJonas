@@ -364,3 +364,207 @@ btn.addEventListener('click', function () {
 // } catch (error) {
 //   console.error(error); // TypeError: Assignment to constant variable.
 // }
+
+// const getJSON = async function (url, message = 'Something went wrong') {
+//   try {
+//     const res = await fetch(url);
+//     if (!res.ok) throw new Error(`${message} (${res.status})`);
+//     const data = await res.json();
+//     return data;
+//   } catch (error) {
+//     throw error;
+//   }
+// };
+
+// NOTE:
+// Promise all returns an array with the results of the promises
+// also if one of them rejects whole operation will rejects
+
+// const get3Countries = async function (c1, c2, c3) {
+//   try {
+//     const data = await Promise.all([
+//       getJSON(
+//         `https://restcountries.eu/rest/v2/name/${c1}`,
+//         `Error getting ${c1}`
+//       ),
+//       getJSON(
+//         `https://restcountries.eu/rest/v2/name/${c2}`,
+//         `Error getting ${c2}`
+//       ),
+//       getJSON(
+//         `https://restcountries.eu/rest/v2/name/${c3}`,
+//         `Error getting ${c3}`
+//       ),
+//     ]);
+//     console.log(data.map(d => d[0].name));
+//   } catch (error) {
+//     console.error(error);
+//   }
+// };
+
+// get3Countries('mexico', 'usa', 'canada');
+
+// const getJSON = async function (url, message = 'Something went wrong') {
+//   try {
+//     const res = await fetch(url);
+//     if (!res.ok) throw new Error(`${message} (${res.status})`);
+//     const data = await res.json();
+//     return data;
+//   } catch (error) {
+//     throw error;
+//   }
+// };
+
+// const timeout = async function (sec) {
+//   try {
+//     await new Promise((_, reject) => {
+//       setTimeout(function () {
+//         reject(new Error('Request took too long!'));
+//       }, sec * 1000);
+//     });
+//   } catch (error) {
+//     throw error;
+//   }
+// };
+
+// // NOTE:
+// // Promise Any returns first fulfilled promise and ignores the rejected ones
+// // unless all of the given promises rejects
+
+// (async function () {
+//   try {
+//     const res = await Promise.any([
+//       getJSON('https://restcountries.eu/rest/v2/name/mexico'),
+//       getJSON('https://restcountries.eu/rest/v2/name/canada'),
+//       timeout(2),
+//     ]);
+//     console.log(res);
+//   } catch (error) {
+//     console.error(error);
+//   }
+// })();
+
+// // NOTE:
+// // All Settled returns an array of results with the given promises
+
+// (async function () {
+//   try {
+//     const res = await Promise.allSettled([
+//       getJSON('https://restcountries.eu/rest/v2/name/mexico'),
+//       getJSON('https://restcountries.eu/rest/v2/name/canada'),
+//       timeout(2),
+//     ]);
+//     console.log(res);
+//   } catch (error) {
+//     console.error(error);
+//   }
+// })();
+
+// // NOTE:
+// // Race returns the first settled promise even if one rejects or fulfills
+
+// (async function () {
+//   try {
+//     const race = await Promise.race([
+//       getJSON('https://restcountries.eu/rest/v2/name/mexico'),
+//       getJSON('https://restcountries.eu/rest/v2/name/canada'),
+//       timeout(2),
+//     ]);
+//     console.log(race[0]); // Mexico
+//   } catch (error) {
+//     console.error(error);
+//   }
+// })();
+
+// CODE CHALLENGE 3
+
+const imgContainer = document.querySelector('.images');
+
+const delay = function (seconds) {
+  return new Promise(resolve => setTimeout(resolve, seconds * 1000));
+};
+
+const loadImage = img => {
+  return new Promise((resolve, reject) => {
+    img.addEventListener('load', function () {
+      imgContainer.append(img);
+      resolve(img);
+    });
+    img.addEventListener('error', function () {
+      reject(new Error('Error loading image'));
+    });
+  });
+};
+
+const createImage = async function (path) {
+  try {
+    const img = document.createElement('img');
+    img.src = path;
+    const loaded = await loadImage(img);
+    return loaded;
+  } catch (error) {
+    throw error;
+  }
+};
+
+let currentImage;
+
+// (async function () {
+//   try {
+//     let img = await createImage('/img/img-1.jpg');
+//     currentImage = img;
+//     await delay(1);
+//     currentImage.style.display = 'none';
+//     img = await createImage('/img/img-2.jpg');
+//     currentImage = img;
+//     await delay(1);
+//     currentImage.style.display = 'none';
+//     img = await createImage('/img/img-3.jpg');
+//     currentImage = img;
+//     await delay(1);
+//   } catch (error) {
+//     console.error(error);
+//   }
+// })();
+
+const loadAll = async imgArr => {
+  try {
+    const imgs = imgArr.map(async img => await createImage(img));
+    const arrImg = await Promise.all(imgs);
+    arrImg.forEach(img => img.classList.add('parallel'));
+    console.log(imgs);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+loadAll(['/img/img-1.jpg', '/img/img-2.jpg', '/img/img-3.jpg']);
+
+// createImage('/img/img-1.jpg')
+//   .then(img => {
+//     currentImage = img;
+//     return wait(2);
+//   })
+//   .then(() => {
+//     currentImage.style.transition = 'all 1s';
+//     currentImage.style.opacity = '0';
+//     currentImage.style.display = 'none';
+
+//     return createImage('/img/img-2.jpg');
+//   })
+//   .then(img => {
+//     currentImage = img;
+//     return wait(2);
+//   })
+//   .then(() => {
+//     currentImage.style.transition = 'all 1s';
+//     currentImage.style.opacity = '0';
+//     currentImage.style.display = 'none';
+
+//     return createImage('/img/img-3.jpg');
+//   })
+//   .then(img => {
+//     currentImage = img;
+//     return wait(2);
+//   })
+//   .catch(err => console.error(err));
