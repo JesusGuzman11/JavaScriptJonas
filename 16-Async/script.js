@@ -480,20 +480,28 @@ btn.addEventListener('click', function () {
 
 const imgContainer = document.querySelector('.images');
 
-const delay = function (seconds) {
-  return new Promise(resolve => setTimeout(resolve, seconds * 1000));
+const delay = async function (seconds) {
+  const waitTimeout = await new Promise(resolve =>
+    setTimeout(resolve, seconds * 1000)
+  );
+  return waitTimeout;
 };
 
-const loadImage = img => {
-  return new Promise((resolve, reject) => {
-    img.addEventListener('load', function () {
-      imgContainer.append(img);
-      resolve(img);
+const loadImage = async img => {
+  try {
+    const imageLoaded = await new Promise((resolve, reject) => {
+      img.addEventListener('load', function () {
+        imgContainer.append(img);
+        resolve(img);
+      });
+      img.addEventListener('error', function () {
+        reject(new Error(`Error loading image ${img.getAttribute('src')}`));
+      });
     });
-    img.addEventListener('error', function () {
-      reject(new Error('Error loading image'));
-    });
-  });
+    return imageLoaded;
+  } catch (error) {
+    throw error;
+  }
 };
 
 const createImage = async function (path) {
@@ -507,15 +515,16 @@ const createImage = async function (path) {
   }
 };
 
-let currentImage;
+// let currentImage;
 
 // (async function () {
 //   try {
 //     let img = await createImage('/img/img-1.jpg');
 //     currentImage = img;
+
 //     await delay(1);
 //     currentImage.style.display = 'none';
-//     img = await createImage('/img/img-2.jpg');
+//     img = await createImage('/img/img-22.jpg');
 //     currentImage = img;
 //     await delay(1);
 //     currentImage.style.display = 'none';
